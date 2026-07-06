@@ -197,3 +197,4 @@ C:\Users\z005avax\gradebook\test\GradeBook.Tests\obj\Debug\net8.0\refint\GradeBo
 C:\Users\z005avax\gradebook\test\GradeBook.Tests\obj\Debug\net8.0\GradeBook.Tests.pdb
 C:\Users\z005avax\gradebook\test\GradeBook.Tests\obj\Debug\net8.0\GradeBook.Tests.genruntimeconfig.cache
 C:\Users\z005avax\gradebook\test\GradeBook.Tests\obj\Debug\net8.0\ref\GradeBook.Tests.dll
+C:\Users\z005avax\gradebook\test\GradeBook.Tests\obj\Debug\net8.0\GradeBook.Tests.sourcelink.json

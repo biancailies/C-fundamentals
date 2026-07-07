@@ -3,23 +3,53 @@ using Microsoft.VisualBasic;
 namespace GradeBook
 {
     public delegate void GradeAddDelegate(Object sender, EventArgs args);
-    public class Book
+
+    public class NamedObject
+    {
+        public NamedObject(string name)
+        {
+            Name = name;
+        }
+
+        public string Name
+        {
+            get; set;
+        }
+    }
+
+    public interface IBook
+    {
+        void AddGrade(double grade);
+        Statistics GetStatistics();
+        String Name{get;}
+        event GradeAddDelegate GradeAdded;
+    }
+
+    public abstract class Book : NamedObject, IBook
+    {
+        protected Book(string name) : base(name)
+        {
+        }
+
+        public virtual event GradeAddDelegate GradeAdded;
+
+        public abstract void AddGrade(double grade);
+
+        public abstract Statistics GetStatistics();
+    }
+    public class InMemoryBook : Book
     {
         private List<double> grades;
         public const string CATEGORY = "Science";
 
-        public string Name
-        {
-            get;set;
-        }
 
-        public Book(string name)
+        public InMemoryBook(string name) : base(name)
         {
             grades = new List<double>();
             Name = name;
         }
 
-        public void AddGrade(double newGrade)
+        public override void AddGrade(double newGrade)
         {
             if(newGrade <= 100 && newGrade >= 0)
             {
@@ -56,53 +86,66 @@ namespace GradeBook
             }
         }
 
-        public event GradeAddDelegate GradeAdded;
+        public override event GradeAddDelegate GradeAdded;
 
-        public Statistics GetStatistics()
+        public override Statistics GetStatistics()
         {
             var res = new Statistics();
-            res.Average = 0.0;
-            res.highGrade = double.MinValue;
-            res.lowGrade = double.MaxValue;
 
             var index = 0;
             do
             {
-                if(grades[index] > res.highGrade)
-                {
-                    res.highGrade = grades[index];
-                }
 
-                res.lowGrade = Math.Min(grades[index], res.lowGrade);
-
-                res.Average += grades[index];
+                res.Add(grades[index]);
 
                 index += 1;
             }while(index < grades.Count);
 
-            res.Average /= grades.Count;
-
-            switch (res.Average)
-            {
-                case var d when d >= 90:
-                    res.LetterGrade = 'A';
-                    break;
-                case var d when d >= 80:
-                    res.LetterGrade = 'B';
-                    break;
-                case var d when d >= 70:
-                    res.LetterGrade = 'C';
-                    break;
-                case var d when d >= 60:
-                    res.LetterGrade = 'D';
-                    break;
-                default:
-                    res.LetterGrade = 'F';
-                    break;
-            }
-
             return res;
         }
+
+        public class DiskBook : Book
+    {
+        public DiskBook(string name) : base(name)
+        {
+        }
+
+        public override event GradeAddDelegate GradeAdded;
+
+        public override void AddGrade(double grade)
+        {
+            using(var writer = File.AppendText($"{Name}.txt"))
+                {
+                    writer.WriteLine(grade);
+
+                    if(GradeAdded != null)
+                    {
+                        GradeAdded(this, new EventArgs());
+                    }
+                }
+        }
+
+        public override Statistics GetStatistics()
+        {
+
+            var result = new Statistics();
+
+            using(var reader = File.OpenText($"{Name}.txt"))
+                {
+                    var line = reader.ReadLine();
+
+                    while(line != null)
+                    {
+                        var number = double.Parse(line);
+                        result.Add(number);
+                        line = reader.ReadLine();
+                    }
+
+                }
+
+            return result;
+        }
+    }
 
         public List<Double> getGrades()
         {

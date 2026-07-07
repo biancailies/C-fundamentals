@@ -5,17 +5,44 @@ namespace GradeBook
     public class Book
     {
         private List<double> grades;
-        private string name;
+        public string Name;
 
         public Book(string name)
         {
             grades = new List<double>();
-            this.name = name;
+            Name = name;
         }
 
         public void AddGrade(double newGrade)
         {
-            grades.Add(newGrade);
+            if(newGrade <= 100 && newGrade >= 0)
+            {
+                grades.Add(newGrade);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid {nameof(newGrade)}");
+            }
+
+        }
+
+        public void AddLetter(char grade)
+        {
+            switch (grade)
+            {
+                case 'A':
+                    grades.Add(90);
+                    break;
+                case 'B':
+                    grades.Add(80);
+                    break;
+                case 'C':
+                    grades.Add(70);
+                    break;
+                default:
+                    grades.Add(0);
+                    break;
+            }
         }
 
         public Statistics GetStatistics()
@@ -25,21 +52,48 @@ namespace GradeBook
             res.highGrade = double.MinValue;
             res.lowGrade = double.MaxValue;
 
-            foreach(var number in grades)
+            var index = 0;
+            do
             {
-                if(number > res.highGrade)
+                if(grades[index] > res.highGrade)
                 {
-                    res.highGrade = number;
+                    res.highGrade = grades[index];
                 }
 
-                res.lowGrade = Math.Min(number, res.lowGrade);
+                res.lowGrade = Math.Min(grades[index], res.lowGrade);
 
-                res.Average += number;
-            }
+                res.Average += grades[index];
+
+                index += 1;
+            }while(index < grades.Count);
 
             res.Average /= grades.Count;
 
+            switch (res.Average)
+            {
+                case var d when d >= 90:
+                    res.LetterGrade = 'A';
+                    break;
+                case var d when d >= 80:
+                    res.LetterGrade = 'B';
+                    break;
+                case var d when d >= 70:
+                    res.LetterGrade = 'C';
+                    break;
+                case var d when d >= 60:
+                    res.LetterGrade = 'D';
+                    break;
+                default:
+                    res.LetterGrade = 'F';
+                    break;
+            }
+
             return res;
+        }
+
+        public List<Double> getGrades()
+        {
+            return grades;
         }
     }
 }

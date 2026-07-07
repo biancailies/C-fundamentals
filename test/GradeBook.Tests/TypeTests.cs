@@ -78,7 +78,7 @@ public class TypeTests
         string name = "Scott";
         var upper = MakeUppercase(name);
 
-        Assert.Equal("Scot", name);
+        Assert.Equal("Scott", name);
         Assert.Equal("SCOTT", upper);
     }
 

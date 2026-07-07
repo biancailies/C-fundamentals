@@ -2,10 +2,16 @@ using Microsoft.VisualBasic;
 
 namespace GradeBook
 {
+    public delegate void GradeAddDelegate(Object sender, EventArgs args);
     public class Book
     {
         private List<double> grades;
-        public string Name;
+        public const string CATEGORY = "Science";
+
+        public string Name
+        {
+            get;set;
+        }
 
         public Book(string name)
         {
@@ -18,6 +24,11 @@ namespace GradeBook
             if(newGrade <= 100 && newGrade >= 0)
             {
                 grades.Add(newGrade);
+
+                if(GradeAdded != null)
+                {
+                    GradeAdded(this, new EventArgs());
+                }
             }
             else
             {
@@ -44,6 +55,8 @@ namespace GradeBook
                     break;
             }
         }
+
+        public event GradeAddDelegate GradeAdded;
 
         public Statistics GetStatistics()
         {

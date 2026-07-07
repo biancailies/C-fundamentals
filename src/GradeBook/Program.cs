@@ -12,6 +12,11 @@ namespace MyApp
         static void Main(string[] args)
         {
             var book = new Book("smt");
+
+            book.GradeAdded += OnGradeAdded;
+            book.GradeAdded += OnGradeAdded;
+            book.GradeAdded -= OnGradeAdded;
+            book.GradeAdded += OnGradeAdded;
             
             // TIPS
             //var input = Console.ReadLine();
@@ -46,11 +51,17 @@ namespace MyApp
 
             var stats = book.GetStatistics();
 
+            System.Console.WriteLine(Book.CATEGORY);
             System.Console.WriteLine($"Lowest grade {stats.lowGrade}");
             System.Console.WriteLine($"Highest grade {stats.highGrade}");
             System.Console.WriteLine($"Average grade {stats.Average:N1}");
             System.Console.WriteLine($"Letter grade {stats.LetterGrade}");
 
+        }
+
+        static void OnGradeAdded(Object sender, EventArgs args)
+        {
+            Console.WriteLine("A grade was added");
         }
     }
 }
